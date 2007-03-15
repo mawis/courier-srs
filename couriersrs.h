@@ -18,8 +18,15 @@
  * ---------------------------------------------------------------------------
  */
 
-#ifndef COURIER_SRS_H
-#define COURIER_SRS_H
+#ifndef COURIERSRS_H
+#define COURIERSRS_H
+
+#include <stddef.h>
+#include <time.h>
+
+extern "C" {	// yes, this is bad ... it should be in srs2.h itself
+#include <srs2.h>
+}
 
 
-#endif // COURIER_SRS_H
+#endif // COURIERSRS_H

@@ -47,5 +47,41 @@ AC_MSG_RESULT($partial_static)
 
 AC_DEFINE_DIR(LOCALSTATEDIR, localstatedir, [base where spool can be found])
 
+dnl check for libsrs2
+AC_ARG_WITH(libsrs2, AC_HELP_STRING([--with-libsrs2=DIR],
+	    [Where to find libsrs2 (required)]),
+	    libsrs2=$withval, libsrs2=yes)
+if test "$libsrs2" != "no"; then
+    if test "$libsrs2" != "yes"; then
+	LDFLAGS="${LDFLAGS} -L$libsrs2/lib -R$libsrs2/lib"
+	CPPFLAGS="${CPPFLAGS} -I$libsrs2/include"
+    fi
+    AC_CHECK_HEADER(srs2.h,
+		    AC_CHECK_LIB(srs2, srs_new,
+				 [libsrs2=yes LIBS="${LIBS} -lsrs2"], libsrs2=no),
+				 libsrs2=no)
+fi
+if test "$libsrs2" != "yes"; then
+    AC_MSG_ERROR([Couldn't find required libsrs2 installation])
+fi
+
+dnl check for libpopt
+AC_ARG_WITH(libpopt, AC_HELP_STRING([--with-libpopt=DIR],
+	    [Where to find libpopt (required)]),
+	    libpopt=$withval, libpopt=yes)
+if test "$libpopt" != "no"; then
+    if test "$libpopt" != "yes"; then
+	LDFLAGS="${LDFLAGS} -L$libpopt/lib -R$libpopt/lib"
+	CPPFLAGS="${CPPFLAGS} -I$libpopt/include"
+    fi
+    AC_CHECK_HEADER(popt.h,
+		    AC_CHECK_LIB(popt, poptStrerror,
+				 [libpopt=yes LIBS="${LIBS} -lpopt"], libpopt=no),
+				 libpopt=no)
+fi
+if test "$libpopt" != "yes"; then
+    AC_MSG_ERROR([Couldn't find required libpopt installation])
+fi
+
 dnl Create the makefiles
 AC_OUTPUT(Makefile intl/Makefile po/Makefile.in m4/Makefile )
