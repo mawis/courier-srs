@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------------------
- *  courier-srs - Doing SRS forwarding with courier
+ *  couriersrs - Doing SRS forwarding with courier
  *  Copyright (C) 2007  Matthias Wimmer <m@tthias.eu>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -18,11 +18,8 @@
  * ---------------------------------------------------------------------------
  */
 
-#ifdef HAVE_CONFIG_H
-#   include <config.h>
-#endif
+#ifndef COURIER_SRS_H
+#define COURIER_SRS_H
 
-#include "courier-srs.h"
 
-int main() {
-}
+#endif // COURIER_SRS_H

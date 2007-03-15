@@ -1,12 +1,12 @@
 SUBDIRS = intl m4 po 
 
-bin_PROGRAMS = courier-srs
+bin_PROGRAMS = couriersrs
 
-noinst_HEADERS = courier-srs.h
+noinst_HEADERS = couriersrs.h
 
-courier-srs_SOURCES = courier-srs.cc
+couriersrs_SOURCES = couriersrs.cc
 
-courier-srs_LDFLAGS = @LDFLAGS@
+couriersrs_LDFLAGS = @LDFLAGS@
 
 ACLOCAL_AMFLAGS = -I m4
 

@@ -1,9 +1,10 @@
 AC_PREREQ(2.50)
 
-AC_INIT(courier-srs.h)
-AM_INIT_AUTOMAKE(courier-srs,0.0.1)
+AC_INIT(couriersrs.h)
+AM_INIT_AUTOMAKE(couriersrs,0.0.1)
 AM_CONFIG_HEADER(config.h)
 AC_LANG(C++)
+AC_GNU_SOURCE
 
 sinclude(ac-helpers/ac_define_dir.m4)
 

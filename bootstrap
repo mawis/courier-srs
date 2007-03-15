@@ -23,7 +23,7 @@ if test -z "`libtool --version 2>&1|head -n 1|egrep '1.[45]'`"; then
 	exit 1;
 fi
 
-if test -z "`autopoint --version 2>&1|head -n 1|egrep '0.1[45]'`"; then
+if test -z "`autopoint --version 2>&1|head -n 1|egrep '0.1[4-6]'`"; then
     	echo "Gettext 0.14+ is required. Aborting build...";
 	exit 1;
 fi
