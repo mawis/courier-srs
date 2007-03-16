@@ -83,5 +83,8 @@ if test "$libpopt" != "yes"; then
     AC_MSG_ERROR([Couldn't find required libpopt installation])
 fi
 
+dnl define where the configuration file is located
+AC_DEFINE_DIR(CONFIG_DIR,sysconfdir,[where the configuration file can be found])
+
 dnl Create the makefiles
 AC_OUTPUT(Makefile intl/Makefile po/Makefile.in m4/Makefile )

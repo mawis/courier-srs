@@ -21,6 +21,10 @@
 #ifndef COURIERSRS_H
 #define COURIERSRS_H
 
+#ifdef HAVE_CONFIG_H
+#   include <config.h>
+#endif
+
 #include <stddef.h>
 #include <time.h>
 
@@ -28,5 +32,10 @@ extern "C" {	// yes, this is bad ... it should be in srs2.h itself
 #include <srs2.h>
 }
 
+#include <popt.h>
+
+#ifndef N_
+#   define N_(n) (n)
+#endif
 
 #endif // COURIERSRS_H
