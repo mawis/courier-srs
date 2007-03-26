@@ -41,7 +41,7 @@ namespace couriersrs {
 	// create a pipe for passing the message to sendmail
 	int pipe_fd[2];
 	if (pipe(pipe_fd)) {
-	    std::cerr << N_("Error creating pipe: ") << std::strerror(errno) << std::endl;
+	    std::cout << N_("Error creating pipe: ") << std::strerror(errno) << std::endl;
 	    return 1;
 	}
 
@@ -50,7 +50,7 @@ namespace couriersrs {
 	if (pid == -1) {
 	    close(pipe_fd[0]);
 	    close(pipe_fd[1]);
-	    std::cerr << N_("Error forking process: ") << std::strerror(errno) << std::endl;
+	    std::cout << N_("Error forking process: ") << std::strerror(errno) << std::endl;
 	    return 1;
 	}
 	if (pid == 0) {
@@ -93,7 +93,7 @@ namespace couriersrs {
 
 	// error?
 	if (WEXITSTATUS(status)) {
-	    std::cerr << N_("Error in sendmail coprocess") << std::endl;
+	    std::cout << N_("Error in sendmail coprocess") << std::endl;
 	    return 1;
 	}
 
@@ -113,6 +113,7 @@ int main(int argc, char const** argv) {
     char const* dest_address = NULL;
     char const* sender = std::getenv("SENDER");
     char const* recipient = std::getenv("RECIPIENT");
+    char const* srsdomain = NULL;
     char const* sendmail = "/usr/sbin/sendmail";
 
     struct poptOption options[] = {
@@ -125,6 +126,7 @@ int main(int argc, char const** argv) {
 	{ "reverse", 'r', POPT_ARG_NONE, &reverse, 0, N_("do reverse instead of forward transformation"), NULL},
 	{ "address", 0, POPT_ARG_STRING, &sender, 0, N_("overwrite sender address"), "address"},
 	{ "alias", 0, POPT_ARG_STRING, &recipient, 0, N_("overwrite recipient address"), "address"},
+	{ "srsdomain", 0, POPT_ARG_STRING, &srsdomain, 0, N_("overwrite domain to build SRS addresses"), "domain"},
 	{ "sendmail", 0, POPT_ARG_STRING, &sendmail, 0, N_("sendmail executable to use"), "file"},
 	POPT_AUTOHELP
 	POPT_TABLEEND
@@ -140,7 +142,7 @@ int main(int argc, char const** argv) {
 
     // error parsing command line?
     if (ret < -1) {
-	std::cerr << poptBadOption(pCtx, POPT_BADOPTION_NOALIAS) << ": " << poptStrerror(ret) << std::endl;
+	std::cout << poptBadOption(pCtx, POPT_BADOPTION_NOALIAS) << ": " << poptStrerror(ret) << std::endl;
 	return 1;
     }
 
@@ -148,7 +150,7 @@ int main(int argc, char const** argv) {
     if (!reverse && !do_version) {
 	dest_address = poptGetArg(pCtx);
 	if (!dest_address) {
-	    std::cerr << N_("No destination address given.") << std::endl;
+	    std::cout << N_("No destination address given.") << std::endl;
 	    return 1;
 	}
     }
@@ -156,7 +158,7 @@ int main(int argc, char const** argv) {
     // anything left?
     if (poptPeekArg(pCtx) != NULL) {
 	// XXX i20n
-	std::cerr << N_("Invalid argument: ") << poptGetArg(pCtx) << std::endl;
+	std::cout << N_("Invalid argument: ") << poptGetArg(pCtx) << std::endl;
 	return 1;
     }
 
@@ -166,6 +168,11 @@ int main(int argc, char const** argv) {
 	std::cout << PACKAGE << N_(" version ") << VERSION << std::endl << std::endl;
 	std::cout << N_("Default location of the SRS secret file is: ") << CONFIG_DIR "/srs_secret" << std::endl;
 	return 0;
+    }
+
+    // use which address to build the source address for the forwarded message
+    if (!srsdomain) {
+	srsdomain = recipient;
     }
 
     // create srs instance
@@ -178,7 +185,7 @@ int main(int argc, char const** argv) {
 	// we have to read it from the secret file
 	std::ifstream secret_file_stream(secret_file, std::ios::in);
 	if (!secret_file_stream) {
-	    std::cerr << N_("Could not open secret file: ") << secret_file << std::endl;
+	    std::cout << N_("Could not open secret file: ") << secret_file << std::endl;
 	    return 1;
 	}
 
@@ -186,7 +193,7 @@ int main(int argc, char const** argv) {
 	secret_file_stream.getline(secret, sizeof(secret));
 
 	if (secret_file_stream.bad()) {
-	    std::cerr << N_("Could not read secret from file: ") << secret_file << std::endl;
+	    std::cout << N_("Could not read secret from file: ") << secret_file << std::endl;
 	    return 1;
 	}
 
@@ -197,26 +204,26 @@ int main(int argc, char const** argv) {
 
     // set the separator character
     if (std::string(separator).length() != 1) {
-	std::cerr << N_("Address separator must be exactly one character.") << std::endl;
+	std::cout << N_("Address separator must be exactly one character.") << std::endl;
 	return 1;
     }
     ret = srs_set_separator(srs, separator[0]);
     if (ret != SRS_SUCCESS) {
-	std::cerr << N_("Could not set separator character: ") << srs_strerror(ret) << std::endl;
+	std::cout << N_("Could not set separator character: ") << srs_strerror(ret) << std::endl;
 	return 1;
     }
 
     // noforward?
     ret = srs_set_noforward(srs, noforward);
     if (ret != SRS_SUCCESS) {
-	std::cerr << N_("Could not set the noforward flag: ") << srs_strerror(ret) << std::endl;
+	std::cout << N_("Could not set the noforward flag: ") << srs_strerror(ret) << std::endl;
 	return 1;
     }
 
     // noreverse?
     ret = srs_set_noreverse(srs, noreverse);
     if (ret != SRS_SUCCESS) {
-	std::cerr << N_("Could not set the noreverse flag: ") << srs_strerror(ret) << std::endl;
+	std::cout << N_("Could not set the noreverse flag: ") << srs_strerror(ret) << std::endl;
 	return 1;
     }
 
@@ -224,26 +231,29 @@ int main(int argc, char const** argv) {
     if (!reverse) {
 	// check addresses are present
 	if (!sender || !sender[0]) {
-	    std::cerr << N_("Sender address could not be determined.") << std::endl;
+	    std::cout << N_("Sender address could not be determined.") << std::endl;
 	    return 1;
 	}
 	if (!recipient || !recipient[0]) {
-	    std::cerr << N_("Recipient address could not be determined.") << std::endl;
+	    std::cout << N_("Recipient address could not be determined.") << std::endl;
+	    return 1;
+	}
+	if (!srsdomain || !srsdomain[0]) {
+	    std::cout << N_("Domain to build SRS address could not be determined.") << std::endl;
 	    return 1;
 	}
 
 	// forward operation
-	size_t buffer_size = std::string(sender).length()+std::string(recipient).length()+65;
+	size_t buffer_size = std::string(sender).length()+std::string(srsdomain).length()+65;
 	char *buffer = new char[buffer_size];
 
 	// rewrite address
-	ret = srs_forward(srs, buffer, buffer_size, sender, recipient);
+	ret = srs_forward(srs, buffer, buffer_size, sender, srsdomain);
 	if (ret != SRS_SUCCESS) {
 	    delete buffer;
-	    std::cerr << N_("Could not rewrite address in forward mode: ") << srs_strerror(ret) << std::endl;
+	    std::cout << N_("Could not rewrite address in forward mode: ") << srs_strerror(ret) << std::endl;
 	    return 1;
 	}
-
 
 	// Create 'Delivered-To' header
 	std::string delivered_to_header = std::string("Delivered-To: ")+recipient+"\r\n";
@@ -262,7 +272,7 @@ int main(int argc, char const** argv) {
 
     // check that we have the recipient address
     if (!recipient || !recipient[0]) {
-	std::cerr << N_("Recipient address could not be determined.") << std::endl;
+	std::cout << N_("Recipient address could not be determined.") << std::endl;
 	return 1;
     }
 
