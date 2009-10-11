@@ -3,6 +3,7 @@ AC_PREREQ(2.50)
 AC_INIT(couriersrs.h)
 AM_INIT_AUTOMAKE(couriersrs,0.1.2)
 AM_CONFIG_HEADER(config.h)
+AC_CONFIG_MACRO_DIR([m4])
 AC_LANG(C++)
 AC_GNU_SOURCE
 
