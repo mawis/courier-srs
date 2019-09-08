@@ -10,6 +10,6 @@ couriersrs_LDFLAGS = @LDFLAGS@
 
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = config.rpath mkinstalldirs
+EXTRA_DIST = config.rpath mkinstalldirs README.md
 
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
