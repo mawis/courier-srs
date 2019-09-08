@@ -93,7 +93,7 @@ you will prefix it by a call to the couriersrs program. So for forwarding a
 message to `user@example.com` you will place the following line in the .courier
 file:
 
-```sh
+```
 |/usr/bin/couriersrs user@example.com
 ```
 
@@ -107,7 +107,7 @@ addresses on a common domain), you can pass couriersrs explicitly the domain it
 uses to build the SRS address using the `--srsdomain=DOMAIN` option on
 couriersrs' command line. Your .courier file might then look like the following:
 
-```sh
+```
 |/usr/bin/couriersrs --srsdomain=srs.example.org user@example.com
 ```
 
@@ -124,7 +124,7 @@ if your courier server operates in case sensitive (use SRS0 and SRS1) or case
 in-sensitive (use srs0 and srs1) mode. For both users you create a
 .courier-default file in their home directory containing the following line:
 
-```sh
+```
 |/usr/bin/couriersrs --reverse
 ```
 
